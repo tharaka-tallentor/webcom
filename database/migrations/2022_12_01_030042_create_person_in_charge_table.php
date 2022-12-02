@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('authorize_by')->nullable();
             $table->string('designation')->nullable();
             $table->string('type')->nullable();
+            $table->string('position')->nullable();
             $table->boolean('status');
             $table->unsignedBigInteger('company_fk_id');
             $table->foreign('company_fk_id')->references('company_id')->on('company')->onDelete('cascade');

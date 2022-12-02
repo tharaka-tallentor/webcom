@@ -20,6 +20,7 @@ class PersonInCharge extends Model
         'designation',
         'mobile',
         'password',
-        'status'
+        'status',
+        'position'
     ];
 }

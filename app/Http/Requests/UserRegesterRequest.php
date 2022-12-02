@@ -24,7 +24,11 @@ class UserRegesterRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            "email" => ["required", "email", "max:255", "regex:/(.+)@(.+)\.(.+)/i"],
+            "password" => ["required", "min:5"],
+            "confirm_password" => ["required", "same:password", "min:5"],
+            "mobile" => ["required", "max:11:min:11", "numeric"],
+            "position" => ["required", "string"]
         ];
     }
 }
