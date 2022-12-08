@@ -27,6 +27,18 @@ class CompanyController extends Controller
         return view('company.user.login');
     }
 
+    public function temp_login_view(Request $request)
+    {
+        return view('company.login');
+    }
+
+    public function company_register_view()
+    {
+        $country = Country::get();
+        $industry = Industry::get();
+        return view('company.register', compact('country', 'industry'));
+    }
+
     public function temp_login(Request $request)
     {
         if ($request->session()->has('temp_login')) {
@@ -72,13 +84,17 @@ class CompanyController extends Controller
                 "otp" => random_int(0000, 9999)
             ];
             $request->session()->put('temp_login', $data);
-            return response()->json(["status" => 200, "message" => "Company registation success ..."]);
+            $request->session()->flash('success', 'Company registerd ...');
+            return redirect()->route('control_panel.login.view');
+            // return response()->json(["status" => 200, "message" => "Company registation success ..."]);
         } else {
-            return response()->json(["status" => 500, "message" => "Company registation faild ..."]);
+            $request->session()->flash('error', 'Company registation faild ...');
+            return redirect()->route('control_panel.register.view');
+            // return response()->json(["status" => 500, "message" => "Company registation faild ..."]);
         }
     }
 
-    public function resend_otp(OTPRequest $request)
+    public function resend_otp(Request $request)
     {
         if ($request->session()->has('temp_login')) {
             $data = [
