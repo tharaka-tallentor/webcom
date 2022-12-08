@@ -107,4 +107,20 @@
         });
     });
 </script>
+@if (session()->has('success'))
+<script type="text/javascript">
+    Toast.fire({
+            icon: 'success',
+            title: "{{session()->get('success')}}"
+        });
+</script>
+@endif
+@if (session()->has('error'))
+<script type="text/javascript">
+    Toast.fire({
+            icon: 'error',
+            title: "{{session()->get('error')}}"
+        });
+</script>
+@endif
 @endsection

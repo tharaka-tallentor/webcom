@@ -10,6 +10,7 @@ use App\Models\Industry;
 use App\Models\PersonInCharge;
 use App\Models\Social;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class CompanyController extends Controller
 {
@@ -77,6 +78,7 @@ class CompanyController extends Controller
         $company->fb_page = $request->fb_page;
         $company->industry_fk_id = $request->industry;
         $company->country_fk_id = $request->country;
+        $company->registor_date = Carbon::now()->toDateTimeString();
 
         if ($company->save()) {
             $data = [
