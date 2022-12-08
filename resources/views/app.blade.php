@@ -63,6 +63,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{route('control_panel.profile.view')}}" class="nav-link">
+                        <i class="nav-icon fa fa-user-secret"></i>
+                        <p>
+                            Profile
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="#logout" id="logout" class="nav-link">
                         <i class="nav-icon fa fa-power-off"></i>
                         <p>

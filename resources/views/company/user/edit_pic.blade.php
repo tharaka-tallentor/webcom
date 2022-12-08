@@ -67,7 +67,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('control_panel.profile.view')}}" class="nav-link">
+                    <a href="{{route('control_panel.profile.view')}}" class="nav-link active">
                         <i class="nav-icon fa fa-user-secret"></i>
                         <p>
                             Profile
@@ -115,13 +115,20 @@
             <!-- Info boxes -->
             <div class="row">
                 <div class="col-md-12">
-                    <form id="pic-form">
+                    <form id="pic-form-update">
                         <div class="row">
+                            <div class="col-md-12" style="display: none">
+                                <div class="form-group">
+                                    <label for="id">ID:</label>
+                                    <input type="number" name="id" id="id" class="form-control"
+                                        placeholder="Enter Email" value="{{$pic->pic_id}}" />
+                                </div>
+                            </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="email">Email:</label>
                                     <input type="email" name="email" id="email" class="form-control"
-                                        placeholder="Enter Email" />
+                                        placeholder="Enter Email" value="{{$pic->email}}" />
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -142,41 +149,23 @@
                                 <div class="form-group">
                                     <label for="mobile">Mobile:</label>
                                     <input type="tel" name="mobile" id="mobile" class="form-control"
-                                        placeholder="Enter Mobile Number" />
+                                        placeholder="Enter Mobile Number" value="0{{$pic->mobile}}" />
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="position">Position:</label>
                                     <input type="text" name="position" id="position" class="form-control"
-                                        placeholder="Enter Company position" />
+                                        placeholder="Enter Company position" value="{{$pic->position}}" />
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="d-flex float-right">
-                                    <button class="btn btn-warning" type="submit">Add</button>
+                                    <button class="btn btn-warning" type="submit">Update</button>
                                 </div>
                             </div>
                         </div>
                     </form>
-                </div>
-                <div class="col-md-12 mt-4">
-                    <table class="table table-bordered table-striped table-responsive" id="pic-table">
-                        <thead>
-                            <tr>
-                                <th>UUID</th>
-                                <th>Email</th>
-                                <th>Mobile</th>
-                                <th>Authorize By</th>
-                                <th>Designation</th>
-                                <th>Position</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Edit</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-                    </table>
                 </div>
             </div>
         </div>
@@ -186,95 +175,27 @@
 </div>
 <!-- /.content-wrapper -->
 @include('includes.footer')
-<script src="{{ asset('lib/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('lib/js/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('lib/js/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset('lib/js/responsive.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('lib/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset('lib/js/buttons.bootstrap4.js') }}"></script>
 <script type="text/javascript">
-    $(document).ready(() => {
-        $('#pic-table').DataTable({
-                    "paging": true,
-                    "lengthChange": false,
-                    "searching": true,
-                    "ordering": true,
-                    "info": true,
-                    "autoWidth": false,
-                    "responsive": true,
-                    "ajax":"{{route('control_panel.all.pic')}}",
-                    columns: [
-                        {data: 'pic_uuid', name: 'pic_uuid'},
-                        {data: 'email', name: 'email'},
-                        {data: 'mobile', name: 'mobile'},
-                        {data: 'authorize_by', name: 'authorize_by'},
-                        {data: 'designation', name: 'designation'},
-                        {data: 'position', name: 'position'},
-                        {data: 'status', name: 'status'},
-                        {data: 'registor_date', name: 'registor_date'},
-                        {data: "pic_id" , render : function ( data, type, row, meta ) {
-                return type === 'display'  ?
-                    '<button class="btn btn-warning" onClick="edit_pic('+data+')">Edit</button>' :
-                    data;
-                }},  
-                        {data: "pic_id" , render : function ( data, type, row, meta ) {
-                return type === 'display'  ?
-                    '<button class="btn btn-danger" onClick="delete_pic('+data+')">Delete</button>' :
-                    data;
-                }}  
-                    ]
-            });
-    });
-    document.getElementById('pic-form').addEventListener('submit', (e) => {
+    document.getElementById('pic-form-update').addEventListener('submit', (e) => {
         e.preventDefault();
+
         $.ajax({
             headers: {
                 'Accept': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
-            url: '{{route("control_panel.registor")}}',
+            url: '{{route("control_panel.pic.update")}}',
             type:'POST',
-            data: $('#pic-form').serialize(),
-            beforeSend: () => {
-                console.log('reqested ...');
+            data:$('#pic-form-update').serialize(),
+            beforSend: () => {
+                console.log('requested ...');
             },
             success: (res) => {
-                if(res.status == 200){
-                    load_table();
+                if (res.status == 200) {
                     Toast.fire({
                         icon: 'success',
                         title: res.message
                     });
-                }else{
-                    Toast.fire({
-                        icon: 'error',
-                        title: res.message
-                    });
-                }
-            },
-            error: (XMLHttpRequest, textStatus, errorThrown) => {
-                    Toast.fire({
-                        icon: 'warning',
-                        title: XMLHttpRequest.responseJSON
-                                .message
-                    });
-            }
-        });
-    });
-
-    document.getElementById('logout').addEventListener('click', (e) => {
-        $.ajax({
-            headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            url: "{{ route('control_panel.logout') }}",
-            type: "GET",
-            beforSend:() => {
-                console.log('requested ...');
-            },
-            success:(res) => {
-                if(res.status == 200){
                     window.location.replace(res.route);
                 }else{
                     Toast.fire({
@@ -283,43 +204,6 @@
                     });
                 }
             },
-            error:(XMLHttpRequest, textStatus, errorThrown) =>{
-                Toast.fire({
-                        icon: 'warning',
-                        title: XMLHttpRequest.responseJSON
-                                .message
-                    });
-            }
-        });
-     });
-     function edit_pic(val){
-        window.location.replace("{{url('/control/person-in-charge/edit')}}"+"/"+val);
-     }
-     function delete_pic(val){
-       $.ajax({
-        headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            url:"{{url('/control/delete/person-in-charge')}}" + "/" + val,
-            type:"DELETE",
-            beforSend: () => {
-                console.log('requested ...');
-            },
-            success: (res) => {
-                if(res.status == 200){
-                    load_table();
-                    Toast.fire({
-                        icon: 'success',
-                        title: res.message
-                    });
-                }else{
-                    Toast.fire({
-                        icon: 'error',
-                        title: res.message
-                    });
-                }
-            },
             error: (XMLHttpRequest, textStatus, errorThrown) => {
                 Toast.fire({
                         icon: 'warning',
@@ -327,14 +211,7 @@
                                 .message
                     });
             }
-       });
-
-     }
-
-    function load_table() {
-        let table = $('#pic-table').DataTable();
-        table.ajax.reload();
-    }
-
+        });
+    });
 </script>
 @endsection
