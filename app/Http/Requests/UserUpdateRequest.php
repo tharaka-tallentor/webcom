@@ -24,7 +24,7 @@ class UserUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            "email" => ["required", "email", "max:255", "regex:/(.+)@(.+)\.(.+)/i"],
+            "email" => ["required", "email", "max:255", "regex:/(.+)@(.+)\.(.+)/i", "indisposable"],
             "confirm_password" => ["same:password"],
             "mobile" => ["required", "max:11:min:11", "numeric"],
             "position" => ["required", "string"]

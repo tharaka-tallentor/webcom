@@ -51,11 +51,11 @@ class PersonInChanrgeController extends Controller
     {
         $person_in_charge = new PersonInCharge();
         $person_in_charge->pic_uuid = Str::uuid();
+        $person_in_charge->name = $request->name;
         $person_in_charge->email = $request->email;
         $person_in_charge->password = Hash::make($request->password);
         $person_in_charge->mobile = $request->mobile;
         $person_in_charge->authorize_by = "";
-        $person_in_charge->designation = "";
         $person_in_charge->position = $request->position;
         $person_in_charge->type = "pic_user";
         $person_in_charge->status = true;
@@ -110,6 +110,7 @@ class PersonInChanrgeController extends Controller
             $data = "";
             if ($request->password != null) {
                 $data = [
+                    "name" => $request->name,
                     "email" => $request->email,
                     "password" => $request->password,
                     "mobile" => $request->mobile,
@@ -117,6 +118,7 @@ class PersonInChanrgeController extends Controller
                 ];
             } else {
                 $data = [
+                    "name" => $request->name,
                     "email" => $request->email,
                     "mobile" => $request->mobile,
                     "position" => $request->position

@@ -24,7 +24,7 @@ class TempLoginRequest extends FormRequest
     public function rules()
     {
         return [
-            "email" => ["required", "email", "max:255", "regex:/(.+)@(.+)\.(.+)/i"],
+            "email" => ["required", "email", "max:255", "regex:/(.+)@(.+)\.(.+)/i", "indisposable"],
             "otp" => ["required", "max:5", "numeric"]
         ];
     }

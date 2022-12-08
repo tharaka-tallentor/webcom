@@ -182,7 +182,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
-
+        Propaganistas\LaravelDisposableEmail\DisposableEmailServiceProvider::class,
         /*
          * Package Service Providers...
          */

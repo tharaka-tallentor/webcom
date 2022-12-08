@@ -126,6 +126,13 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="name">Name:</label>
+                                    <input type="text" name="name" id="name" class="form-control"
+                                        placeholder="Enter name" value="{{$pic->name}}" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="email">Email:</label>
                                     <input type="email" name="email" id="email" class="form-control"
                                         placeholder="Enter Email" value="{{$pic->email}}" />

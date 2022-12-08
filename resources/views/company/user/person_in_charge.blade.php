@@ -126,6 +126,13 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
+                                    <label for="name">Name:</label>
+                                    <input type="text" name="name" id="name" class="form-control"
+                                        placeholder="Enter name" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
                                     <label for="password">Password:</label>
                                     <input type="password" name="password" id="password" class="form-control"
                                         placeholder="Enter password" />
@@ -165,10 +172,10 @@
                         <thead>
                             <tr>
                                 <th>UUID</th>
+                                <th>Name</th>
                                 <th>Email</th>
                                 <th>Mobile</th>
                                 <th>Authorize By</th>
-                                <th>Designation</th>
                                 <th>Position</th>
                                 <th>Status</th>
                                 <th>Date</th>
@@ -205,10 +212,10 @@
                     "ajax":"{{route('control_panel.all.pic')}}",
                     columns: [
                         {data: 'pic_uuid', name: 'pic_uuid'},
+                        {data: 'name', name: 'name'},
                         {data: 'email', name: 'email'},
                         {data: 'mobile', name: 'mobile'},
                         {data: 'authorize_by', name: 'authorize_by'},
-                        {data: 'designation', name: 'designation'},
                         {data: 'position', name: 'position'},
                         {data: 'status', name: 'status'},
                         {data: 'registor_date', name: 'registor_date'},

@@ -16,11 +16,11 @@ return new class extends Migration
         Schema::create('person_in_charge', function (Blueprint $table) {
             $table->id('pic_id');
             $table->uuid('pic_uuid');
+            $table->string('name');
             $table->string('email')->uniqid();
             $table->string('password');
             $table->bigInteger('mobile');
             $table->string('authorize_by')->nullable();
-            $table->string('designation')->nullable();
             $table->string('type')->nullable();
             $table->string('position')->nullable();
             $table->boolean('status');
