@@ -84,6 +84,9 @@ class CompanyController extends Controller
                 "otp" => random_int(0000, 9999)
             ];
             $request->session()->put('temp_login', $data);
+            //email part is hear
+
+
             $request->session()->flash('success', 'Company registerd ...');
             return redirect()->route('control_panel.login.view');
             // return response()->json(["status" => 200, "message" => "Company registation success ..."]);
