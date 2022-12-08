@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CompanyRequest;
+use App\Http\Requests\OTPRequest;
 use App\Models\Company;
 use App\Models\Country;
 use App\Models\Industry;
@@ -30,9 +31,10 @@ class CompanyController extends Controller
     {
         if ($request->session()->has('temp_login')) {
             if (
-                $company = Company::where('email', $request->email)->first() and
-                $request->session()->get('temp_login') == $request->otp
+                $company = Company::where('email', $request->session()->get('temp_login.email'))->first() and
+                $request->session()->get('temp_login.otp') == $request->otp
             ) {
+                $request->session()->forget('temp_login');
                 $social = Social::where('company_fk_id', $company->company_id)->get();
                 $industry = Industry::where("industry_id", $company->industry_fk_id)->first();
                 $data = ["company" => $company, "social" => $social, "industry" => $industry];
@@ -65,10 +67,29 @@ class CompanyController extends Controller
         $company->country_fk_id = $request->country;
 
         if ($company->save()) {
-            $request->session()->put('temp_login', random_int(0000, 9999));
+            $data = [
+                "email" => $request->email,
+                "otp" => random_int(0000, 9999)
+            ];
+            $request->session()->put('temp_login', $data);
             return response()->json(["status" => 200, "message" => "Company registation success ..."]);
         } else {
             return response()->json(["status" => 500, "message" => "Company registation faild ..."]);
+        }
+    }
+
+    public function resend_otp(OTPRequest $request)
+    {
+        if ($request->session()->has('temp_login')) {
+            $data = [
+                "email" => $request->session()->get('temp_login.email'),
+                "otp" => random_int(0000, 9999)
+            ];
+            $request->session()->forget('temp_login');
+            $request->session()->put('temp_login', $data);
+            return response()->json(["status" => 200, "message" => "OTP Sended ..."]);
+        } else {
+            return response()->json(["status" => 500, "message" => "Invalid session ..."]);
         }
     }
 
