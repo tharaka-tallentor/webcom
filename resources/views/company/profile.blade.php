@@ -71,6 +71,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{route('control_panel.all.company.post')}}" class="nav-link">
+                        <i class="nav-icon fa fa-plus"></i>
+                        <p>
+                            Post
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="#logout" id="logout" class="nav-link">
                         <i class="nav-icon fa fa-power-off"></i>
                         <p>
@@ -143,7 +151,24 @@
                                 </li>
                             </ul>
 
-                            <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
+                            <div class="row">
+                                <div class="col-6 col-md-6">
+                                    <a href="javascript:void(0)" class="btn btn-outline-success">Connections</a>
+                                </div>
+                                <div class="col-6 col-md-6">
+                                    <a href="javascript:void(0)" id="approvel-btn"
+                                        class="btn btn-outline-success">Approvel</a>
+                                </div>
+                            </div>
+                            <div id="approve-model" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+                                aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="row" id="content"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a> --}}
                         </div>
                         <!-- /.card-body -->
                     </div>
@@ -296,6 +321,46 @@
                             </form>
                         </div>
                     </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Social</h3>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{route('control_panel.company.social.add')}}" method="POST">
+                                @csrf
+                                @method('post')
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="media_name">Media Name:</label>
+                                                <input type="text" name="media_name" id="media_name"
+                                                    class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="media_link">Media Link:</label>
+                                                <input type="url" name="media_link" id="media_link"
+                                                    class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="d-flex float-right">
+                                                <button type="submit" class="btn btn-info">ADD</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card-footer">
+                            @foreach ($social as $key => $data)
+                            <a class="badge badge-warning p-3" href="{{$data->link}}"
+                                target="blank">{{$data->social_media_name}}</a>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -303,6 +368,9 @@
 </div>
 @include('includes.footer')
 <script type="text/javascript">
+    $(document).ready(() => {
+        // socials();
+    });
     document.getElementById('logout').addEventListener('click', (e) => {
         $.ajax({
             headers: {
@@ -333,6 +401,76 @@
             }
         });
      });
+
+    //  document.getElementById('social-form').addEventListener('submit', (e) => {
+    //     e.preventDefault();
+    //     $.ajax({
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    //         },
+    //         url:"{{route('control_panel.company.social.add')}}",
+    //         type:"POST",
+    //         data:$('#social-form').serialize(),
+    //         beforSend: () => {
+    //             console.log('requested ...');
+    //         },
+    //         success: (res) => {
+    //             if (res.status == 200) {
+    //                 Toast.fire({
+    //                     icon: 'success',
+    //                     title: res.message
+    //                 });
+    //                 // socials();
+    //             }else{
+    //                 Toast.fire({
+    //                     icon: 'error',
+    //                     title: res.message
+    //                 });
+    //             }
+    //         },
+    //         error: (XMLHttpRequest, textStatus, errorThrown) => {
+    //             Toast.fire({
+    //                     icon: 'warning',
+    //                     title: XMLHttpRequest.responseJSON
+    //                             .message
+    //                 });
+    //         }
+    //     });
+    //  });
+
+    //  function socials() {
+    //     let social_area =  $('#social-tag');
+    //     social_area.innerHTML = "";
+    //     $.ajax({
+    //         headers: {
+    //             'Accept': 'application/json',
+    //         },
+    //         url:"{{route('control_panel.all.company.socials')}}",
+    //         type:"GET",
+    //         beforSend: () => {
+    //             console.log('requested ...');
+    //         },
+    //         success: (res) => {
+    //             let tag;
+    //             res.forEach(element => {
+    //                 tag += ' <div class="alert alert-warning alert-dismissible">'+
+    //               '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'+
+    //               '<h5>'+element.social_media_name+'</h5>'+
+    //                 '</div>' 
+    //             });
+
+    //             social_area.html(tag);
+    //         },
+    //         error: (XMLHttpRequest, textStatus, errorThrown) => {
+    //             Toast.fire({
+    //                     icon: 'warning',
+    //                     title: XMLHttpRequest.responseJSON
+    //                             .message
+    //                 });
+    //         }
+    //     });
+    //  }
 </script>
 @if (session()->has('success'))
 <script type="text/javascript">
@@ -350,6 +488,28 @@
         });
 </script>
 @endif
+<script type="text/javascript">
+    document.getElementById('approvel-btn').addEventListener('click', (e) => {
+        $.ajax({
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            url: '{{route("control_panel.approve.list")}}',
+            type: 'GET',
+            beforSend: () => {
+
+            },
+            success: (res) => {
+                $("#content").html(res.data);
+                $('#approve-model').modal('show');
+            },
+            error: (XMLHttpRequest, textStatus, errorThrown) => {
+
+            }
+        });
+    });
+</script>
 {{-- <script type="text/javascript">
     document.getElementById('profile-update').addEventListener('submit', (e) => {
         e.preventDefault();

@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CompanyRequest;
 use App\Http\Requests\OTPRequest;
+use App\Http\Requests\SocialRequest;
 use App\Models\Company;
+use App\Models\Connection;
+use App\Models\ConnectionList;
 use App\Models\Country;
 use App\Models\Industry;
 use App\Models\PersonInCharge;
@@ -14,10 +17,28 @@ use Illuminate\Support\Carbon;
 
 class CompanyController extends Controller
 {
+    public function root()
+    {
+        return redirect()->route('control_panel.register.view');
+    }
+
     public function index(Request $request)
     {
         if ($request->session()->has('company_user')) {
-            return view('app');
+            $id = Connection::where('company_fk_id', $request->session()->get('company_user.company.company_id'))->first();
+            $list = ConnectionList::where('connection_fk_id', $id->connection_id)->select('connection_list.company_fk_id')->get();
+            $data = array();
+            foreach ($list as $key => $number) {
+                $data[] = $number->company_fk_id;
+            }
+            $connections = Connection::join('company', 'company.company_id', '=', 'connection.company_fk_id')
+                ->where('company_fk_id', '!=', $data)
+                ->where('company_fk_id', '!=', $request->session()->get('company_user.company.company_id'))
+                ->inRandomOrder()
+                ->limit(20)
+                ->select('company.*')
+                ->get();
+            return view('app', compact('connections'));
         } else {
             return redirect()->route('control_panel.login');
         }
@@ -48,9 +69,8 @@ class CompanyController extends Controller
                 $request->session()->get('temp_login.otp') == $request->otp
             ) {
                 $request->session()->forget('temp_login');
-                $social = Social::where('company_fk_id', $company->company_id)->get();
                 $industry = Industry::where("industry_id", $company->industry_fk_id)->first();
-                $data = ["company" => $company, "social" => $social, "industry" => $industry];
+                $data = ["company" => $company, "industry" => $industry];
                 $request->session()->put('company_user', $data);
                 return response()->json(["status" => 200, "message" => "login success", "route" => route("control_panel.dashboard")]);
             } else {
@@ -80,22 +100,45 @@ class CompanyController extends Controller
         $company->country_fk_id = $request->country;
         $company->registor_date = Carbon::now()->toDateTimeString();
 
-        if ($company->save()) {
-            $data = [
-                "email" => $request->email,
-                "otp" => random_int(0000, 9999)
-            ];
-            $request->session()->put('temp_login', $data);
-            //email part is hear
-
-
-            $request->session()->flash('success', 'Company registerd ...');
-            return redirect()->route('control_panel.login.view');
-            // return response()->json(["status" => 200, "message" => "Company registation success ..."]);
+        if ($request->ajax()) {
+            if ($company->save()) {
+                if (ConnectionController::create($company->id) and ApproveController::approvel($company->id)) {
+                    $otp = random_int(0000, 9999);
+                    $data = [
+                        "email" => $request->email,
+                        "otp" => $otp
+                    ];
+                    $request->session()->put('temp_login', $data);
+                    MailController::sendSignupEmail($company->name, $company->email, $otp);
+                    return response()->json(["status" => 200, "message" => 'Company registerd ...', 'route' => route('control_panel.login.view')]);
+                } else {
+                    $request->session()->flash('error', 'Connection error ...');
+                    return response()->json(["status" => 500, "message" => 'Company connection faild ...', 'route' => route('control_panel.login.view')]);
+                }
+            } else {
+                $request->session()->flash('error', 'Connection error ...');
+                return response()->json(["status" => 500, "message" => 'Company registation faild ...', 'route' => route('control_panel.login.view')]);
+            }
         } else {
-            $request->session()->flash('error', 'Company registation faild ...');
-            return redirect()->route('control_panel.register.view');
-            // return response()->json(["status" => 500, "message" => "Company registation faild ..."]);
+            if ($company->save()) {
+                if (ConnectionController::create($company->id)) {
+                    $otp = random_int(0000, 9999);
+                    $data = [
+                        "email" => $request->email,
+                        "otp" => $otp
+                    ];
+                    $request->session()->put('temp_login', $data);
+                    MailController::sendSignupEmail($company->name, $company->email, $otp);
+                    $request->session()->flash('success', 'Company registerd ...');
+                    return redirect()->route('control_panel.login.view');
+                } else {
+                    $request->session()->flash('error', 'Connection error ...');
+                    return redirect()->route('control_panel.login.view');
+                }
+            } else {
+                $request->session()->flash('error', 'Company registation faild ...');
+                return redirect()->route('control_panel.register.view');
+            }
         }
     }
 
@@ -119,7 +162,8 @@ class CompanyController extends Controller
         if ($request->session()->has('company_user')) {
             $country = Country::all();
             $industry = Industry::all();
-            return view('company.profile', compact('country', 'industry'));
+            $social = Social::where('company_fk_id', $request->session()->get('company_user.company.company_id'))->get();
+            return view('company.profile', compact('country', 'industry', 'social'));
         } else {
             return redirect()->route('control_panel.login');
         }
@@ -191,5 +235,40 @@ class CompanyController extends Controller
         } else {
             return response()->json(["status" => 500, "message" => "Authorize url pleace login ..."]);
         }
+    }
+
+    public function add_social(SocialRequest $request)
+    {
+        $social = new Social();
+        $social->social_media_name = $request->media_name;
+        $social->link    = $request->media_link;
+        $social->icon = "";
+        $social->registor_date = Carbon::now()->toDateTimeString();
+        $social->company_fk_id = $request->session()->get('company_user.company.company_id');
+
+        if ($request->ajax()) {
+            !$social->save() ? $res = ["status" => 500, "message" => "Listing faild ..."] : $res = ["status" => 200, "message" => "Listed ..."];
+            return response()->json($res);
+        } else {
+            !$social->save() ?   $request->session()->flash('error', 'Listing faild ...') : $request->session()->flash('success', 'Listed ...');
+            return redirect()->route('control_panel.profile.view');
+        }
+    }
+
+    public function delete_social(Request $request)
+    {
+        if ($request->ajax()) {
+            !Social::where('social_id', $request->id)->delete() ? $res = ["status" => 500, "message" => "Delete faild ..."] : $res = ["status" => 200, "message" => "Deleted ..."];
+            return response()->json($res);
+        } else {
+            !Social::where('social_id', $request->id)->delete() ?   $request->session()->flash('error', 'Delete faild ...') : $request->session()->flash('success', 'Deleted ...');
+            return redirect()->route('control_panel.profile.view');
+        }
+    }
+
+    public function get_all_social(Request $request)
+    {
+        $social = Social::where('company_fk_id', $request->session()->get('company_user.company.company_id'))->get();
+        return response()->json($social);
     }
 }

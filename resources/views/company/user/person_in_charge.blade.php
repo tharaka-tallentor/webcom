@@ -75,6 +75,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{route('control_panel.all.company.post')}}" class="nav-link">
+                        <i class="nav-icon fa fa-plus"></i>
+                        <p>
+                            Post
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="#logout" id="logout" class="nav-link">
                         <i class="nav-icon fa fa-power-off"></i>
                         <p>
@@ -119,32 +127,36 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="email">Email:</label>
-                                    <input type="email" name="email" id="email" class="form-control"
-                                        placeholder="Enter Email" />
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
                                     <label for="name">Name:</label>
                                     <input type="text" name="name" id="name" class="form-control"
                                         placeholder="Enter name" />
                                 </div>
                             </div>
-                            <div class="col-md-3">
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="email">Email:</label>
+                                    <input type="email" name="email" id="email" class="form-control"
+                                        placeholder="Enter Email" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="password">Password:</label>
                                     <input type="password" name="password" id="password" class="form-control"
                                         placeholder="Enter password" />
                                 </div>
                             </div>
-                            <div class="col-md-3">
+
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="confirm_password">Confirm password:</label>
                                     <input type="password" name="confirm_password" id="confirm_password"
                                         class="form-control" placeholder="Enter Confirm Password" />
                                 </div>
                             </div>
+
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="mobile">Mobile:</label>
@@ -152,6 +164,7 @@
                                         placeholder="Enter Mobile Number" />
                                 </div>
                             </div>
+
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="position">Position:</label>
@@ -177,7 +190,6 @@
                                 <th>Mobile</th>
                                 <th>Authorize By</th>
                                 <th>Position</th>
-                                <th>Status</th>
                                 <th>Date</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
@@ -217,7 +229,6 @@
                         {data: 'mobile', name: 'mobile'},
                         {data: 'authorize_by', name: 'authorize_by'},
                         {data: 'position', name: 'position'},
-                        {data: 'status', name: 'status'},
                         {data: 'registor_date', name: 'registor_date'},
                         {data: "pic_id" , render : function ( data, type, row, meta ) {
                 return type === 'display'  ?

@@ -2,13 +2,12 @@
 @section('meta')
 
 @endsection
-@section('title', 'Person in charge')
+@section('title', 'company profile')
 @section('content')
-<link rel="stylesheet" href="{{ asset('lib/css/buttons.bootstrap4.min.css') }}" />
-<link rel="stylesheet" href="{{ asset('lib/css/responsive.bootstrap4.min.css') }}" />
-<link rel="stylesheet" href="{{ asset('lib/css/dataTables.bootstrap4.min.css') }}" />
-
 @include('includes.nav')
+@push('styles')
+<link rel="stylesheet" href="{{ asset('lib/css/summernote-bs4.min.css') }}" />
+@endpush
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
@@ -59,7 +58,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('control_panel.person_in_charge')}}" class="nav-link active">
+                    <a href="{{route('control_panel.person_in_charge')}}" class="nav-link">
                         <i class="nav-icon fa fa-user"></i>
                         <p>
                             Person In Charge
@@ -67,7 +66,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('control_panel.profile.view')}}" class="nav-link active">
+                    <a href="{{route('control_panel.profile.view')}}" class="nav-link">
                         <i class="nav-icon fa fa-user-secret"></i>
                         <p>
                             Profile
@@ -75,7 +74,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('control_panel.all.company.post')}}" class="nav-link">
+                    <a href="{{route('control_panel.all.company.post')}}" class="nav-link active">
                         <i class="nav-icon fa fa-plus"></i>
                         <p>
                             Post
@@ -96,121 +95,88 @@
     </div>
     <!-- /.sidebar -->
 </aside>
-
-<!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Person In Charge</h1>
+                    <h1 class="m-0">Post</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Person In Charge</li>
+                        <li class="breadcrumb-item active">Post</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
-
-    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-            <!-- Info boxes -->
             <div class="row">
                 <div class="col-md-12">
-                    <form id="pic-form-update">
-                        <div class="row">
-                            <div class="col-md-12" style="display: none">
+                    <div class="card">
+                        <div class="card-body">
+                            <form action="{{route('control_panel.company.post.create')}}" method="POST">
+                                @csrf
+                                @method('post')
                                 <div class="form-group">
-                                    <label for="id">ID:</label>
-                                    <input type="number" name="id" id="id" class="form-control"
-                                        placeholder="Enter Email" value="{{$pic->pic_id}}" />
+                                    <textarea class="form-control" name="content" id="content" rows="3"></textarea>
+                                    @error('content')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                            </div>
-                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name">Name:</label>
-                                    <input type="text" name="name" id="name" class="form-control"
-                                        placeholder="Enter name" value="{{$pic->name}}" />
+                                    <div class="d-flex float-right">
+                                        <button class="btn btn-primary" type="submit">Post</button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="email">Email:</label>
-                                    <input type="email" name="email" id="email" class="form-control"
-                                        placeholder="Enter Email" value="{{$pic->email}}" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                @foreach ($post as $key => $item)
+                                <div class="card">
+                                    <div class="card-body">
+                                        {!!$item->content!!}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="password">Password:</label>
-                                    <input type="password" name="password" id="password" class="form-control"
-                                        placeholder="Enter password" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="confirm_password">Confirm password:</label>
-                                    <input type="password" name="confirm_password" id="confirm_password"
-                                        class="form-control" placeholder="Enter Confirm Password" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="mobile">Mobile:</label>
-                                    <input type="tel" name="mobile" id="mobile" class="form-control"
-                                        placeholder="Enter Mobile Number" value="0{{$pic->mobile}}" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="position">Position:</label>
-                                    <input type="text" name="position" id="position" class="form-control"
-                                        placeholder="Enter Company position" value="{{$pic->position}}" />
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="d-flex float-right">
-                                    <button class="btn btn-warning" type="submit">Update</button>
-                                </div>
+                                @endforeach
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
-        <!--/. container-fluid -->
     </section>
-    <!-- /.content -->
 </div>
-<!-- /.content-wrapper -->
 @include('includes.footer')
+@push('script')
+<script src="{{ asset('lib/js/summernote-bs4.min.js') }}"></script>
+@endpush
 <script type="text/javascript">
-    document.getElementById('pic-form-update').addEventListener('submit', (e) => {
-        e.preventDefault();
-
+    $(document).ready(() => {
+       $('#content').summernote();
+    });
+    document.getElementById('logout').addEventListener('click', (e) => {
         $.ajax({
             headers: {
                 'Accept': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
-            url: '{{route("control_panel.pic.update")}}',
-            type:'POST',
-            data:$('#pic-form-update').serialize(),
-            beforSend: () => {
+            url: "{{ route('control_panel.logout') }}",
+            type: "GET",
+            beforSend:() => {
                 console.log('requested ...');
             },
-            success: (res) => {
-                if (res.status == 200) {
-                    Toast.fire({
-                        icon: 'success',
-                        title: res.message
-                    });
+            success:(res) => {
+                if(res.status == 200){
                     window.location.replace(res.route);
                 }else{
                     Toast.fire({
@@ -219,7 +185,7 @@
                     });
                 }
             },
-            error: (XMLHttpRequest, textStatus, errorThrown) => {
+            error:(XMLHttpRequest, textStatus, errorThrown) =>{
                 Toast.fire({
                         icon: 'warning',
                         title: XMLHttpRequest.responseJSON
@@ -227,6 +193,25 @@
                     });
             }
         });
-    });
+     });
+
+    
 </script>
+@if (session()->has('success'))
+<script type="text/javascript">
+    Toast.fire({
+            icon: 'success',
+            title: "{{session()->get('success')}}"
+        });
+</script>
+@endif
+@if (session()->has('error'))
+<script type="text/javascript">
+    Toast.fire({
+            icon: 'error',
+            title: "{{session()->get('error')}}"
+        });
+</script>
+@endif
+
 @endsection

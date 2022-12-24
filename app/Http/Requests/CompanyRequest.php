@@ -24,16 +24,15 @@ class CompanyRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => ["required", "string"],
+            "name" => ["required"],
             "mobile" => ["required", "numeric", "regex:/^([0-9\s\-\+\(\)]*)$/", "min:10"],
             "tel" => ["required", "numeric", "regex:/^([0-9\s\-\+\(\)]*)$/", "min:10"],
             "email" => ["required", "email", "regex:/(.+)@(.+)\.(.+)/i", "indisposable"],
             "address" => ["required"],
-            "avatar" => ["mimes:jpeg"],
             "web" => ["required", "regex:/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i"],
             "fb_page" => ["required", "regex:/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i"],
             "country" => ["required", "numeric"],
-            "industry" => ["required", "numeric"]
+            "industry" => ["required", "numeric"],
         ];
     }
 }

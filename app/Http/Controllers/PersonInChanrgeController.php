@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegesterRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Models\Approve;
 use App\Models\Company;
+use App\Models\Connection;
 use App\Models\Industry;
 use App\Models\PersonInCharge;
 use App\Models\Social;
@@ -27,15 +29,21 @@ class PersonInChanrgeController extends Controller
                 if ($request->session()->has('company_user')) {
                     $request->session()->forget('company_user');
                     $company = Company::where('company_id', $pic->company_fk_id)->first();
-                    $social = Social::where('company_fk_id', $company->company_id)->get();
                     $industry = Industry::where("industry_id", $company->industry_fk_id)->first();
-                    $data = ["company" => $company, "social" => $social, "industry" => $industry];
+                    $data = [
+                        "company" => $company,
+                        "industry" => $industry,
+                        "pic" => $pic,
+                    ];
                     $request->session()->put('company_user', $data);
                 } else {
                     $company = Company::where('company_id', $pic->company_fk_id)->first();
-                    $social = Social::where('company_fk_id', $company->company_id)->get();
                     $industry = Industry::where("industry_id", $company->industry_fk_id)->first();
-                    $data = ["company" => $company, "social" => $social, "industry" => $industry];
+                    $data = [
+                        "company" => $company,
+                        "industry" => $industry,
+                        "pic" => $pic,
+                    ];
                     $request->session()->put('company_user', $data);
                 }
                 return response()->json(["status" => 200, "message" => "User Logged ...", "route" => route('control_panel.dashboard')]);
@@ -59,7 +67,7 @@ class PersonInChanrgeController extends Controller
         $person_in_charge->position = $request->position;
         $person_in_charge->type = "pic_user";
         $person_in_charge->status = true;
-        $person_in_charge->company_fk_id = 1;
+        $person_in_charge->company_fk_id = $request->session()->get('company_user.company.company_id');
         $person_in_charge->registor_date = Carbon::now()->toDateTimeString();
 
         !$person_in_charge->save() ? $res = ["status" => 500, "message" => "Registation faild ..."] : $res = ["status" => 200, "message" => "Registation success ..."];

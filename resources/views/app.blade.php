@@ -3,6 +3,9 @@
 
 @endsection
 @section('title', 'Home')
+@push('styles')
+<link rel="stylesheet" href="{{ asset('lib/css/slick.css') }}" />
+@endpush
 @section('content')
 @include('includes.nav')
 <!-- Main Sidebar Container -->
@@ -67,6 +70,14 @@
                         <i class="nav-icon fa fa-user-secret"></i>
                         <p>
                             Profile
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('control_panel.all.company.post')}}" class="nav-link">
+                        <i class="nav-icon fa fa-plus"></i>
+                        <p>
+                            Post
                         </p>
                     </a>
                 </li>
@@ -168,6 +179,39 @@
                     </div>
                     <!-- /.info-box -->
                 </div>
+                <div class="col-12 col-md-12 col-sm-12">
+                    <div class="connections">
+                        @foreach ($connections as $key => $data)
+                        <div class="card m-2">
+                            <img src="{{ asset($data->company_avatar) }}" class="card-img" loading="lazy"
+                                alt="coonection_avatar">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 mb-2">
+                                        <div class="d-flex justify-content-center">
+                                            <h3 class="card-title">{{$data->name}}</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="d-flex justify-content-center">
+                                            <a href="{{route('control_panel.approvel', ['id' => $data->company_id])}}"
+                                                class="btn btn-primary rounded-circle">
+                                                <i class="fa fa-plus" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="col-12 col-md-12">
+                    <div class="card">
+                        <div class="card-body"></div>
+                    </div>
+                </div>
                 <!-- /.col -->
             </div>
             <!-- /.row -->
@@ -179,7 +223,44 @@
 </div>
 <!-- /.content-wrapper -->
 @include('includes.footer')
+@push('script')
+<script src="{{ asset('lib/js/slick.min.js') }}"></script>
+@endpush
 <script type="text/javascript">
+    $(document).ready(() => {
+        $('.connections').slick({
+            dots: false,
+            infinite: true,
+            speed: 300,
+            slidesToShow: 4,
+            slidesToScroll: 4,
+            responsive: [
+                {
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: 3,
+                    slidesToScroll: 3,
+                    infinite: true,
+                    dots: false
+                }
+                },
+                {
+                breakpoint: 600,
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 2
+                }
+                },
+                {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1
+                }
+                }
+            ]
+            });
+    });
     document.getElementById('logout').addEventListener('click', (e) => {
         $.ajax({
             headers: {

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('lib/css/fontawesome-free/css/all.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('lib/css/sweetalert2.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('/lib/css/toastr.min.css') }}" />
+    @stack('styles')
     <script src="{{ asset('lib/js/jquery.min.js') }}"></script>
     <script src="{{ asset('lib/js/toastr.min.js') }}"></script>
     <script src="{{ asset('lib/js/sweetalert2.min.js') }}"></script>
@@ -29,6 +30,7 @@
     <div class="wrapper">
         @yield('content')
     </div>
+    @stack('script')
     <script src="{{ asset('lib/js/adminlte.min.js') }}"></script>
     <script src="{{ asset('lib/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('lib/js/dashboard2.js') }}"></script>
