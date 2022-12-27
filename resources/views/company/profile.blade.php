@@ -153,7 +153,8 @@
 
                             <div class="row">
                                 <div class="col-6 col-md-6">
-                                    <a href="javascript:void(0)" class="btn btn-outline-success">Connections</a>
+                                    <a href="javascript:void(0)" id="connection-btn"
+                                        class="btn btn-outline-success">Connections</a>
                                 </div>
                                 <div class="col-6 col-md-6">
                                     <a href="javascript:void(0)" id="approvel-btn"
@@ -165,6 +166,14 @@
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="row" id="content"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="conection-model" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+                                aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="row" id="conn-content"></div>
                                     </div>
                                 </div>
                             </div>
@@ -402,6 +411,30 @@
         });
      });
 
+     document.getElementById('connection-btn').addEventListener('click', (e) => {
+        $.ajax({
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            url: "{{ route('control_panel.connection.list') }}",
+            type: "GET",
+            beforSend:() => {
+                console.log('requested ...');
+            },
+            success:(res) => {
+               $('#conn-content').html(res.list);
+               $('#conection-model').modal('show');
+            },
+            error:(XMLHttpRequest, textStatus, errorThrown) =>{
+                Toast.fire({
+                        icon: 'warning',
+                        title: XMLHttpRequest.responseJSON
+                                .message
+                    });
+            }
+        });
+     });
     //  document.getElementById('social-form').addEventListener('submit', (e) => {
     //     e.preventDefault();
     //     $.ajax({

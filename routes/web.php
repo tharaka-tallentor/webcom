@@ -36,6 +36,10 @@ Route::name('control_panel.')->group(function () {
     Route::get('/control/company/post/view', [PostController::class, 'post_view'])->name('all.company.post');
     Route::get('/control/add/approvel/{id}', [ConnectionController::class, 'add_connection'])->name('approvel');
     Route::get('/control/approve-list', [ConnectionController::class, 'approveList'])->name('approve.list');
+    Route::get('/control/connection-list', [ConnectionController::class, 'connectionList'])->name('connection.list');
+    Route::get('/control/delete/connection/{token}/{id}', [ConnectionController::class, 'rejectConnection'])->name('connection.reject');
+    Route::get('/control/delete/approvel/{token}/{id}', [ApproveController::class, 'rejectApprovel'])->name('reject.approvel');
+    Route::get('/control/approve/connection/{token}/{id}/{list_id}', [ConnectionController::class, 'approve'])->name('approve.connection');
 
     Route::post('/control/person-in-charge/update', [PersonInChanrgeController::class, 'update_pic'])->name('pic.update');
     Route::post('/control/login/user', [PersonInChanrgeController::class, 'login'])->name('auth');
