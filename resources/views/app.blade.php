@@ -209,7 +209,24 @@
                 </div>
                 <div class="col-12 col-md-12">
                     <div class="card">
-                        <div class="card-body"></div>
+                        <div class="card-body">
+                            <div class="row">
+                                @foreach ($news_que as $key => $item)
+                                <div class="col-12 col-md-12 col-sm-6">
+                                    <div class="card">
+                                        <div class="d-flex justify-content-center">
+                                            {!! $item['content'] !!}
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="d-flex float-right">
+                                                <p>{{$item['date']}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- /.col -->

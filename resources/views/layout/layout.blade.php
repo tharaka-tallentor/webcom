@@ -34,6 +34,23 @@
     <script src="{{ asset('lib/js/adminlte.min.js') }}"></script>
     <script src="{{ asset('lib/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('lib/js/dashboard2.js') }}"></script>
+    {{-- <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
+        
+        const firebaseConfig = {
+          apiKey: "AIzaSyCy8IgrPMCq-3nZJeA9yX10gf9oLw1hmoA",
+          authDomain: "webcom-a4a3e.firebaseapp.com",
+          projectId: "webcom-a4a3e",
+          storageBucket: "webcom-a4a3e.appspot.com",
+          messagingSenderId: "981642582948",
+          appId: "1:981642582948:web:72fba6445e222113f53f31",
+          measurementId: "G-FZ9LJ0BX3C"
+        };
+      
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+    </script> --}}
 </body>
 
 </html>

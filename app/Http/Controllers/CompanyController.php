@@ -11,9 +11,16 @@ use App\Models\ConnectionList;
 use App\Models\Country;
 use App\Models\Industry;
 use App\Models\PersonInCharge;
+use App\Models\Post;
 use App\Models\Social;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+
+use function PHPUnit\Framework\isEmpty;
 
 class CompanyController extends Controller
 {
@@ -38,7 +45,27 @@ class CompanyController extends Controller
                 ->limit(20)
                 ->select('company.*')
                 ->get();
-            return view('app', compact('connections'));
+
+            $post_news = array();
+
+            $post = Post::whereIn('company_fk_id', $data)
+                ->select('post.*')
+                ->inRandomOrder()
+                ->limit(50)
+                ->get();
+
+            foreach ($post as $key => $item) {
+                $pic = PersonInCharge::where('pic_id', $item->pic_fk_id)->first();
+                $comp = Company::where('company_id', $item->company_fk_id)->first();
+                $post_news[] = array(
+                    "content" => $item->content,
+                    "date" => $item->post_date,
+                    "publish_by" => $pic->name,
+                    "company" => $comp->name
+                );
+            }
+            $news_que = $this->paginate($post_news);
+            return view('app', compact('connections', 'news_que'));
         } else {
             return redirect()->route('control_panel.login');
         }
@@ -270,5 +297,12 @@ class CompanyController extends Controller
     {
         $social = Social::where('company_fk_id', $request->session()->get('company_user.company.company_id'))->get();
         return response()->json($social);
+    }
+
+    public function paginate($items, $perPage = 50, $page = null, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 }

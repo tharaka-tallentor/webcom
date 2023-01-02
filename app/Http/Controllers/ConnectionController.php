@@ -10,6 +10,9 @@ use App\Models\ConnectionList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Kutia\Larafirebase\Facades\Larafirebase;
+use Notification;
+use App\Notifications\SendPushNotification;
 
 class ConnectionController extends Controller
 {
@@ -228,6 +231,14 @@ class ConnectionController extends Controller
         if ($this->token_match($request->token)) {
             if ($request->session()->has('company_user')) {
                 if ($request->ajax()) {
+                    $connectionList = ConnectionList::where('connection_list_id', $request->id)->first();
+                    // $company = Company::where('company_id', $connectionList->company_fk_id)->first();
+                    $connection = Connection::where('company_fk_id', $connectionList->company_fk_id)->first();
+                    if (
+                        ConnectionList::where('connection_list_id', $request->id)->delete()
+                        && ConnectionList::where('connection_fk_id', $connection->connection_id)->where('company_fk_id', '')->delete()
+                    ) {
+                    }
                     !ConnectionList::where('connection_list_id', $request->id)->delete() ? $res = ["status" => 500, "message" => "Can't remove ..."] : $res = ["status" => 200, "message" => "Removed ..."];
                     return response()->json($res);
                 } else {
@@ -254,5 +265,46 @@ class ConnectionController extends Controller
         } else {
             return false;
         }
+    }
+
+    public function firebaseTest(Request $request)
+    {
+        // $fcmTokens = csrf_token();
+        // Larafirebase::withTitle($request->title)
+        //     ->withBody($request->message)
+        //     ->sendMessage($fcmTokens);
+
+        // new SendPushNotification($request->title, $request->message, csrf_token());
+
+        $firebaseToken = csrf_token();
+
+        $SERVER_API_KEY = env('FIREBASE_SERVER_KEY');
+
+        $data = [
+            "registration_ids" => $firebaseToken,
+            "notification" => [
+                "title" => $request->title,
+                "body" => $request->message,
+            ]
+        ];
+        $dataString = json_encode($data);
+
+        $headers = [
+            'Authorization: key=' . $SERVER_API_KEY,
+            'Content-Type: application/json',
+        ];
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+
+        $response = curl_exec($ch);
+
+        // return back()->with('success', 'Notification send successfully.');
     }
 }
