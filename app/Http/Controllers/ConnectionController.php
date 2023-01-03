@@ -231,18 +231,53 @@ class ConnectionController extends Controller
         if ($this->token_match($request->token)) {
             if ($request->session()->has('company_user')) {
                 if ($request->ajax()) {
-                    $connectionList = ConnectionList::where('connection_list_id', $request->id)->first();
+                    $connectionList = ConnectionList::where('connection_list_id', $request->id)
+                        ->first();
                     // $company = Company::where('company_id', $connectionList->company_fk_id)->first();
-                    $connection = Connection::where('company_fk_id', $connectionList->company_fk_id)->first();
+                    $connection = Connection::where('company_fk_id', $connectionList->company_fk_id)
+                        ->first();
+                    $comp = Connection::join('company', 'company.company_id', '=', 'connection.company_fk_id')
+                        ->where('connection_id', $connectionList->connection_fk_id)
+                        ->select('company.company_id')
+                        ->get();
                     if (
-                        ConnectionList::where('connection_list_id', $request->id)->delete()
-                        && ConnectionList::where('connection_fk_id', $connection->connection_id)->where('company_fk_id', '')->delete()
+                        ConnectionList::where('connection_list_id', $request->id)
+                        ->delete()
+                        && ConnectionList::where('connection_fk_id', $connection->connection_id)
+                        ->where('company_fk_id', $comp[0]->company_id)
+                        ->delete()
                     ) {
+                        return response()->json(["status" => 200, "message" => "Removed ..."]);
+                    } else {
+                        return response()->json(["status" => 500, "message" => "Can't remove ..."]);
                     }
-                    !ConnectionList::where('connection_list_id', $request->id)->delete() ? $res = ["status" => 500, "message" => "Can't remove ..."] : $res = ["status" => 200, "message" => "Removed ..."];
-                    return response()->json($res);
+                    // !ConnectionList::where('connection_list_id', $request->id)->delete() ? $res = ["status" => 500, "message" => "Can't remove ..."] : $res = ["status" => 200, "message" => "Removed ..."];
                 } else {
-                    if (ConnectionList::where('connection_list_id', $request->id)->delete()) {
+                    $connectionList = ConnectionList::where('connection_list_id', $request->id)
+                        ->first();
+                    // $company = Company::where('company_id', $connectionList->company_fk_id)->first();
+                    $connection = Connection::where('company_fk_id', $connectionList->company_fk_id)
+                        ->first();
+                    $comp = Connection::join('company', 'company.company_id', '=', 'connection.company_fk_id')
+                        ->where('connection_id', $connectionList->connection_fk_id)
+                        ->select('company.company_id')
+                        ->get();
+
+                    // if (ConnectionList::where('connection_list_id', $request->id)->delete()) {
+                    //     $request->session()->flash('success', 'Removed ...');
+                    //     return redirect()->route("control_panel.profile.view");
+                    // } else {
+                    //     $request->session()->flash('error', "Can't removed ...");
+                    //     return redirect()->route("control_panel.profile.view");
+                    // }
+
+                    if (
+                        ConnectionList::where('connection_list_id', $request->id)
+                        ->delete()
+                        && ConnectionList::where('connection_fk_id', $connection->connection_id)
+                        ->where('company_fk_id', $comp[0]->company_id)
+                        ->delete()
+                    ) {
                         $request->session()->flash('success', 'Removed ...');
                         return redirect()->route("control_panel.profile.view");
                     } else {

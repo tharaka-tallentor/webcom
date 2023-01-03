@@ -6,6 +6,22 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('lib/css/slick.css') }}" />
 @endpush
+@if (session()->has('success'))
+<script type="text/javascript">
+    Toast.fire({
+            icon: 'success',
+            title: "{{session()->get('success')}}"
+        });
+</script>
+@endif
+@if (session()->has('error'))
+<script type="text/javascript">
+    Toast.fire({
+            icon: 'error',
+            title: "{{session()->get('error')}}"
+        });
+</script>
+@endif
 @section('content')
 @include('includes.nav')
 <!-- Main Sidebar Container -->
@@ -217,14 +233,63 @@
                                         <div class="d-flex justify-content-center">
                                             {!! $item['content'] !!}
                                         </div>
+                                        <div class="d-flex float-right">
+                                            <p>{{$item['date']}}</p>
+                                        </div>
                                         <div class="card-footer">
-                                            <div class="d-flex float-right">
-                                                <p>{{$item['date']}}</p>
+                                            <div class="row">
+                                                <div class="col-3 col-md-3">
+                                                    <select name="react" id="react" class="form-control"
+                                                        style="border: none">
+                                                        @foreach ($reaction as $react_key => $react)
+                                                        <option value="{{$react->react_id }}">
+                                                            <span
+                                                                style="width: 20px; height: auto;">{!!$react->emojy_code!!}</span>
+                                                        </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-6 col-md-6">
+                                                    <a href="javascript:void(0)" onclick="comment_open({{$item['id']}})"
+                                                        style="color: white">
+                                                        <i class="fa fa-comment" aria-hidden="true"></i>
+                                                        Comment
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 @endforeach
+                                <div id="comment-model" class="modal fade bd-example-modal-lg" tabindex="-1"
+                                    role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="col-12 col-md-12 col-sm-6">
+                                                <div class="card mt-2">
+                                                    <form action="{{route('control_panel.post.comment')}}"
+                                                        method="POST">
+                                                        @csrf
+                                                        @method('POST')
+                                                        <div class="input-group" style="display: none">
+                                                            <input type="text" class="form-control" name="post_id"
+                                                                id="post_id" />
+                                                        </div>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" name="post_comment"
+                                                                id="post_comment" />
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-outline-primary"
+                                                                    type="submit">Comment</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <div class="row" id="content"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -278,6 +343,7 @@
             ]
             });
     });
+
     document.getElementById('logout').addEventListener('click', (e) => {
         $.ajax({
             headers: {
@@ -302,5 +368,43 @@
             }
         });
      });
+
+    function comment_open(params) {
+        $('#comment-model').modal('show');
+        $('#post_id').val(params);
+    }
+
+    // document.getElementById('comment-form').addEventListener('submit', (e) => {
+    //     e.preventDefault();
+    //     // let formData = new FormData();
+    //     // formData.append('post_id', post_id);
+    //     // formData.append('comment', document.getElementById('comment').value);
+    //     let data = {
+    //         "post_id" : post_id,
+    //         "post_comment" : document.getElementById('post_comment').value
+    //     }
+    //     $.ajax({
+    //         headers:{
+    //             'Accept': 'application/json',
+    //             'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    //         },
+    //         url: '{{route("control_panel.post.comment")}}',
+    //         type: 'POST',
+    //         data: {
+    //             name: "hellow"
+    //         },
+    //         processData: false,
+    //         beforSend: () => {
+    //             console.log('requested ...');
+    //         },
+    //         success: (res) => {
+    //             console.log(res);
+    //         },
+    //         error: (XMLHttpRequest, textStatus, errorThrown) => {
+    //             console.error(XMLHttpRequest.responseJSON
+    //                             .message);
+    //         }
+    //     });
+    // });
 </script>
 @endsection

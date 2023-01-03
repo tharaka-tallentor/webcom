@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id('react_id');
             $table->text('icon')->nullable();
             $table->string('react');
+            $table->text('color_code')->nullable();
             $table->timestamp('react_date')->nullable();
             $table->timestamps();
             $table->engine = "InnoDB";

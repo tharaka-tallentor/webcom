@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApproveController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\PersonInChanrgeController;
@@ -50,6 +51,7 @@ Route::name('control_panel.')->group(function () {
     Route::post('/control/company/social/add', [CompanyController::class, 'add_social'])->name('company.social.add');
     Route::post('/control/company/post/create', [PostController::class, 'create'])->name('company.post.create');
     Route::post('/control/company/push/notify', [ConnectionController::class, 'firebaseTest'])->name('push.notification');
+    Route::post('/control/company/post/comment', [CommentController::class, 'comment'])->name('post.comment');
 
     Route::delete('/control/delete/person-in-charge/{id}', [PersonInChanrgeController::class, 'delete_pic'])->name('delete.pic');
     Route::delete('/control/delete/post/{id}', [PostController::class, 'delete'])->name('company.post.delete');

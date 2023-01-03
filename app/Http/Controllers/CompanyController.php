@@ -12,6 +12,7 @@ use App\Models\Country;
 use App\Models\Industry;
 use App\Models\PersonInCharge;
 use App\Models\Post;
+use App\Models\Reaction;
 use App\Models\Social;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -58,6 +59,7 @@ class CompanyController extends Controller
                 $pic = PersonInCharge::where('pic_id', $item->pic_fk_id)->first();
                 $comp = Company::where('company_id', $item->company_fk_id)->first();
                 $post_news[] = array(
+                    "id" => $item->post_id,
                     "content" => $item->content,
                     "date" => $item->post_date,
                     "publish_by" => $pic->name,
@@ -65,7 +67,10 @@ class CompanyController extends Controller
                 );
             }
             $news_que = $this->paginate($post_news);
-            return view('app', compact('connections', 'news_que'));
+
+            $reaction = Reaction::all();
+
+            return view('app', compact('connections', 'news_que', 'reaction'));
         } else {
             return redirect()->route('control_panel.login');
         }
