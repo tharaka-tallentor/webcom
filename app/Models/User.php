@@ -18,6 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $table = 'users';
+    protected $primaryKey = 'user_id';
     public $timestamps = true;
 
     protected $fillable = [
@@ -28,7 +29,6 @@ class User extends Authenticatable
         'authorize_by',
         'designation',
         'mobile',
-        'password'
     ];
 
     /**

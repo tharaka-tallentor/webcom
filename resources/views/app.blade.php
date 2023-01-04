@@ -372,39 +372,64 @@
     function comment_open(params) {
         $('#comment-model').modal('show');
         $('#post_id').val(params);
+        getAllComment(params)
     }
 
-    // document.getElementById('comment-form').addEventListener('submit', (e) => {
-    //     e.preventDefault();
-    //     // let formData = new FormData();
-    //     // formData.append('post_id', post_id);
-    //     // formData.append('comment', document.getElementById('comment').value);
-    //     let data = {
-    //         "post_id" : post_id,
-    //         "post_comment" : document.getElementById('post_comment').value
-    //     }
-    //     $.ajax({
-    //         headers:{
-    //             'Accept': 'application/json',
-    //             'X-CSRF-TOKEN': '{{ csrf_token() }}'
-    //         },
-    //         url: '{{route("control_panel.post.comment")}}',
-    //         type: 'POST',
-    //         data: {
-    //             name: "hellow"
-    //         },
-    //         processData: false,
-    //         beforSend: () => {
-    //             console.log('requested ...');
-    //         },
-    //         success: (res) => {
-    //             console.log(res);
-    //         },
-    //         error: (XMLHttpRequest, textStatus, errorThrown) => {
-    //             console.error(XMLHttpRequest.responseJSON
-    //                             .message);
-    //         }
-    //     });
-    // });
+    document.getElementById('comment-form').addEventListener('submit', (e) => {
+        $.ajax({
+            headers:{
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            url: '{{route("control_panel.post.comment")}}',
+            type: 'POST',
+            data: $('#comment-form').serialize(),
+            beforSend: () => {
+                console.log('requested ...');
+            },
+            success: (res) => {
+                if(res.status == 200){
+                    let post_id = document.getElementById('post_comment');
+                    getAllComment(post_id.value);
+                    post_id.value = "";
+                    Toast.fire({
+                    icon: 'success',
+                    title: res.message
+                });
+                }else{
+                    Toast.fire({
+                    icon: 'error',
+                    title: res.message
+                });
+                }
+            },
+            error: (XMLHttpRequest, textStatus, errorThrown) => {
+                console.error(XMLHttpRequest.responseJSON
+                                .message);
+            }
+        });
+    });
+
+    function getAllComment(value){
+        $.ajax({
+            headers:{
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            type: 'GET',
+            url: '{{url("/")}}'+ '/control/all/post/' + value + '/' + 'comment',
+            processData: false,
+            beforSend: () => {
+                console.log('requested .....');
+            },
+            success: (res) => {
+                $('#content').html(res);
+            },
+            error: (XMLHttpRequest, textStatus, errorThrown) => {
+                console.error(XMLHttpRequest.responseJSON
+                                .message);
+            }
+        });
+    }
 </script>
 @endsection

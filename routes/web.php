@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\ApproveController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CompanyController;
@@ -41,6 +42,7 @@ Route::name('control_panel.')->group(function () {
     Route::get('/control/delete/connection/{token}/{id}', [ConnectionController::class, 'rejectConnection'])->name('connection.reject');
     Route::get('/control/delete/approvel/{token}/{id}', [ApproveController::class, 'rejectApprovel'])->name('reject.approvel');
     Route::get('/control/approve/connection/{token}/{id}/{list_id}', [ConnectionController::class, 'approve'])->name('approve.connection');
+    Route::get('/control/all/post/{id}/comment', [CommentController::class, 'getComment'])->name('all.post.comment');
 
     Route::post('/control/person-in-charge/update', [PersonInChanrgeController::class, 'update_pic'])->name('pic.update');
     Route::post('/control/login/user', [PersonInChanrgeController::class, 'login'])->name('auth');
