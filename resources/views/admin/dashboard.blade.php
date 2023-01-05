@@ -3,6 +3,9 @@
 
 @endsection
 @section('title', 'Webcom | DASHBOARD')
+@push('styles')
+<link rel="stylesheet" href="{{ asset('lib/css/daterangepicker.css') }}" />
+@endpush
 @section('content')
 @include('admin.includes.nav')
 <!-- Main Sidebar Container -->
@@ -48,7 +51,7 @@
                 <!-- Add icons to the links using the .nav-icon class
                        with font-awesome or any other icon font library -->
                 <li class="nav-item menu-open">
-                    <a href="#" class="nav-link active">
+                    <a href="{{route('admin.dashboard.view')}}" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
                             Home
@@ -56,10 +59,18 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{route('admin.company.view')}}" class="nav-link">
                         <i class="nav-icon fa fa-user"></i>
                         <p>
-                            System Users
+                            System Companys
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('admin.company.user.view')}}" class="nav-link">
+                        <i class="nav-icon fa fa-user"></i>
+                        <p>
+                            Company Users
                         </p>
                     </a>
                 </li>
@@ -171,6 +182,48 @@
             </div>
             <!-- /.row -->
 
+            <div class="row">
+                <div class="col-6 col-md-6">
+                    <div class="card bg-gradient-success">
+                        <div class="card-header border-0">
+
+                            <h3 class="card-title">
+                                <i class="far fa-calendar-alt"></i>
+                                Calendar
+                            </h3>
+                            <!-- tools card -->
+                            <div class="card-tools">
+                                <!-- button with a dropdown -->
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-success btn-sm dropdown-toggle"
+                                        data-toggle="dropdown" data-offset="-52">
+                                        <i class="fas fa-bars"></i>
+                                    </button>
+                                    <div class="dropdown-menu" role="menu">
+                                        <a href="#" class="dropdown-item">Add new event</a>
+                                        <a href="#" class="dropdown-item">Clear events</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="#" class="dropdown-item">View calendar</a>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-success btn-sm" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <!-- /. tools -->
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body pt-0">
+                            <!--The calendar -->
+                            <div id="calendar" style="width: 100%"></div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            </div>
         </div>
         <!--/. container-fluid -->
     </section>
@@ -178,4 +231,26 @@
 </div>
 <!-- /.content-wrapper -->
 @include('includes.footer')
+@push('script')
+<script src="{{ asset('lib/js/daterangepicker.js') }}"></script>
+{{-- <script type="text/javascript">
+    $('#calendar').datetimepicker({ format: 'L', inline: true, beforeShowDay: function(date) { console.log(date); } });
+</script> --}}
+@if (session()->has('success'))
+<script type="text/javascript">
+    Toast.fire({
+            icon: 'success',
+            title: "{{session()->get('success')}}"
+        });
+</script>
+@endif
+@if (session()->has('error'))
+<script type="text/javascript">
+    Toast.fire({
+            icon: 'error',
+            title: "{{session()->get('error')}}"
+        });
+</script>
+@endif
+@endpush
 @endsection

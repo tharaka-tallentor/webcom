@@ -30,10 +30,10 @@
     <div class="wrapper">
         @yield('content')
     </div>
-    @stack('script')
     <script src="{{ asset('lib/js/adminlte.min.js') }}"></script>
     <script src="{{ asset('lib/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('lib/js/dashboard2.js') }}"></script>
+    @stack('script')
 </body>
 
 </html>

@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 
 class ApproveController extends Controller
 {
-    public function approvel($company_id)
+    public static function approvel($company_id)
     {
         $approuve = new Approve();
         $approuve->company_fk_id = $company_id;

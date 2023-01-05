@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CompanyRequest;
 use App\Http\Requests\OTPRequest;
 use App\Http\Requests\SocialRequest;
+use App\Models\Approve;
 use App\Models\Company;
 use App\Models\Connection;
 use App\Models\ConnectionList;
@@ -153,7 +154,7 @@ class CompanyController extends Controller
             }
         } else {
             if ($company->save()) {
-                if (ConnectionController::create($company->id)) {
+                if (ConnectionController::create($company->id) and  ApproveController::approvel($company->id)) {
                     $otp = random_int(0000, 9999);
                     $data = [
                         "email" => $request->email,

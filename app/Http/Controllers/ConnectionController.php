@@ -16,7 +16,7 @@ use App\Notifications\SendPushNotification;
 
 class ConnectionController extends Controller
 {
-    public function create($company_id)
+    public static function create($company_id)
     {
         $connection = new Connection();
         $connection->company_fk_id = $company_id;

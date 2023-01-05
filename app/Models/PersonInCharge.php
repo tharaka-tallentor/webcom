@@ -10,6 +10,7 @@ class PersonInCharge extends Model
     use HasFactory;
 
     protected $table = 'person_in_charge';
+    protected $primaryKey = 'pic_id';
     public $timestamps = true;
 
     protected $fillable = [
