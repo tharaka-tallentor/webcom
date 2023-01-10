@@ -141,4 +141,128 @@ class PersonInChanrgeController extends Controller
             return response()->json(["status" => 500, "message" => "Authorize url pleace login ..."]);
         }
     }
+
+    public function fogotPasswordView1(Request $request)
+    {
+        return view('company.user.forgot_password_email_1');
+    }
+
+    public function fogotPasswordView2(Request $request)
+    {
+        if ($request->session()->has('forgot')) {
+            return view('company.user.forgot_password_new_password_3');
+        } else {
+            return abort(404);
+        }
+    }
+
+    // public function forgotPasswordView3(Request $request)
+    // {
+    //     if ($request->session()->has('forgot')) {
+    //         if ($request->session()->get('forgot.status') == true) {
+    //         } else {
+    //         }
+    //     } else {
+    //         return redirect()->route();
+    //     }
+    // }
+
+    public function forgotStep1(Request $request)
+    {
+
+        $request->validate([
+            "email" => ["required", "email", "regex:/(.+)@(.+)\.(.+)/i", "indisposable"]
+        ]);
+        $data = [
+            "email" => $request->email,
+        ];
+        if ($request->ajax()) {
+            if (PersonInCharge::where('email', $request->email)->first()) {
+                $request->session()->put('forgot', $data);
+                $link = 'Link :- ' . route('control_panel.forgot.password.view_2');
+                MailController::sendSignupEmail('Forgot Password Request', $request->email, $link);
+                return response(["status" => 200, "message" => "Reset Pasword Link Sended In Your Email", "route" => route('control_panel.forgot.password.view_2')]);
+            } else {
+                return response(["status" => 500, "message" => "User not found ..."]);
+            }
+        } else {
+            if (PersonInCharge::where('email', $request->email)->first()) {
+                $request->session()->put('forgot', $data);
+                $link = 'Link :- ' . route('control_panel.forgot.password.view_2');
+                MailController::sendSignupEmail('Forgot Password Request', $request->email, $link);
+                return redirect()->route('control_panel.forgot.password.view_1');
+            } else {
+                $request->session()->flash('error', 'User not found ...');
+                return redirect()->route('control_panel.forgot.password.view_1');
+            }
+        }
+    }
+
+    // public function otpCheck(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         if ($request->session()->get('forgot.otp') == $request->otp) {
+    //             $request->session()->put('forgot.status', true);
+    //             return response()->json(["status" => 200, "message" => "OTP Match ...", "route" => route('')]);
+    //         } else {
+    //             return response()->json(["status" => 500, "message" => "OTP Miss Match ..."]);
+    //         }
+    //     } else {
+    //         if ($request->session()->get('forgot.otp') == $request->otp) {
+    //             $request->session()->put('forgot.status', true);
+    //             return redirect()->route('');
+    //         } else {
+    //             $request->session()->flash('error', 'OTP Miss Match ...');
+    //             return redirect()->route('');
+    //         }
+    //     }
+    // }
+
+    public function newPassword(Request $request)
+    {
+        $request->validate([
+            'password' => ['required', 'min:5'],
+            'confirm_password' => ['required', 'min:5', 'same:password']
+        ]);
+
+        if ($request->ajax()) {
+            !PersonInCharge::where('email', $request->session()->get('forgot.email'))->update(["password" => Hash::make($request->password)]) ? $res = ["status" => 500, "message" => "Password Change Faild .."] :
+                $res = ["status" => 200, "message" => "Password Updated ...", "route" => route('control_panel.login')];
+            return response()->json($res);
+        } else {
+            if (PersonInCharge::where('email', $request->session()->get('forgot.email'))
+                ->update(["password" => Hash::make($request->password)])
+            ) {
+                $request->session()->flash('success', 'Password updated ...');
+                return redirect()->route('control_panel.login');
+            } else {
+                $request->session()->flash('error', 'Update Faild...');
+                return redirect()->route('control_panel.forgot.password.view_2');
+            }
+        }
+    }
+
+    // public function resendOTP(Request $request)
+    // {
+    //     $otp = random_int(0000, 9999);
+    //     if ($request->ajax()) {
+    //         if ($request->session()->has('forgot')) {
+    //             $request->session()->put('forgot.otp', $otp);
+    //             MailController::sendSignupEmail('Forgot Password Request', $request->session()->get('forgot.email'), $otp);
+    //             return response()->json(["status" => 200, "message" => "OTP Sended Check Email Inbox ..."]);
+    //         } else {
+    //             return response()->json(["status" => 500, "message" => "OTP Send Faild ..."]);
+    //         }
+    //     } else {
+    //         if ($request->session()->has('forgot')) {
+    //             $request->session()->put('forgot.otp', $otp);
+    //             MailController::sendSignupEmail('Forgot Password Request', $request->session()->get('forgot.email'), $otp);
+    //             $request->session()->flash('success', '"OTP Sended Check Email Inbox ...');
+    //             return redirect()->route('');
+    //         } else {
+    //             $request->session()->flash('error', 'OTP Send Faild ...');
+    //             return redirect()->route('');
+    //         }
+    //     }
+    // }
 }

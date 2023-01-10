@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\ApproveController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CompanyController;
@@ -43,6 +42,8 @@ Route::name('control_panel.')->group(function () {
     Route::get('/control/delete/approvel/{token}/{id}', [ApproveController::class, 'rejectApprovel'])->name('reject.approvel');
     Route::get('/control/approve/connection/{token}/{id}/{list_id}', [ConnectionController::class, 'approve'])->name('approve.connection');
     Route::get('/control/all/post/{id}/comment', [CommentController::class, 'getComment'])->name('all.post.comment');
+    Route::get('/control/forgot/password/validate-email', [PersonInChanrgeController::class, 'fogotPasswordView1'])->name('forgot.password.view_1');
+    Route::get('/control/forgot/password/new-password', [PersonInChanrgeController::class, 'fogotPasswordView2'])->name('forgot.password.view_2');
 
     Route::post('/control/person-in-charge/update', [PersonInChanrgeController::class, 'update_pic'])->name('pic.update');
     Route::post('/control/login/user', [PersonInChanrgeController::class, 'login'])->name('auth');
@@ -54,6 +55,9 @@ Route::name('control_panel.')->group(function () {
     Route::post('/control/company/post/create', [PostController::class, 'create'])->name('company.post.create');
     Route::post('/control/company/push/notify', [ConnectionController::class, 'firebaseTest'])->name('push.notification');
     Route::post('/control/company/post/comment', [CommentController::class, 'comment'])->name('post.comment');
+    Route::post('/control/password/forgot-email', [PersonInChanrgeController::class, 'forgotStep1'])->name('email.forgot');
+    Route::post('/control/password/forgot-password', [PersonInChanrgeController::class, 'newPassword'])->name('password.forgot');
+
 
     Route::delete('/control/delete/person-in-charge/{id}', [PersonInChanrgeController::class, 'delete_pic'])->name('delete.pic');
     Route::delete('/control/delete/post/{id}', [PostController::class, 'delete'])->name('company.post.delete');

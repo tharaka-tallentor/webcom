@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ComapnyUserController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LoginController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RegisterController;
 use App\Http\Controllers\Admin\RegisterControllrt;
 use Illuminate\Http\Request;
@@ -21,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::name('admin.')->group(function () {
+
     //GET Routes
     Route::get('/admin/logout', [LoginController::class, 'logout'])
         ->name('logout');
@@ -41,12 +44,33 @@ Route::name('admin.')->group(function () {
     Route::get('/admin/company/user/{id}/list', [ComapnyUserController::class, 'companyUsers'])
         ->name('company.user.list')
         ->middleware('auth');
+    Route::get('/admin/system-admin', [AdminController::class, 'index'])
+        ->name('in.system')
+        ->middleware('auth');
+    Route::get('/admin/all', [AdminController::class, 'getAllAdmins'])
+        ->name('all')
+        ->middleware('auth');
+    Route::get('/admin/{id}/update', [AdminController::class, 'updateAdminView'])
+        ->name('update.view')
+        ->middleware('auth');
+    Route::get('/admin/profile', [ProfileController::class, 'index'])
+        ->name('profile')
+        ->middleware('auth');
 
     //POST Routes
     Route::post('/admin/login', [LoginController::class, 'login'])
         ->name('login');
     Route::post('/admin/register', [RegisterController::class, 'register'])
         ->name('register');
+    Route::post('/admin/update/data', [AdminController::class, 'updateAdmin'])
+        ->name('update.data')
+        ->middleware('auth');
+    Route::post('/admin/profile/update', [ProfileController::class, 'updateProfile'])
+        ->name('profile.update')
+        ->middleware('auth');
+    Route::post('/admin/avatar/update', [ProfileController::class, 'avatarUpload'])
+        ->name('avatar.upload')
+        ->middleware('auth');
 
     //DELETE Routes
     Route::delete('/admin/company/delete', [CompanyController::class, 'delete'])
@@ -54,5 +78,8 @@ Route::name('admin.')->group(function () {
         ->middleware('auth');
     Route::delete('/admin/company/user/delete', [ComapnyUserController::class, 'deleteCompanyUser'])
         ->name('company.user.delete')
+        ->middleware('auth');
+    Route::delete('/admin/delete', [AdminController::class, 'deleteAdmin'])
+        ->name('delete')
         ->middleware('auth');
 });

@@ -29,6 +29,7 @@ class User extends Authenticatable
         'authorize_by',
         'designation',
         'mobile',
+        'user_avatar'
     ];
 
     /**

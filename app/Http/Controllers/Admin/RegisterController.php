@@ -28,6 +28,7 @@ class RegisterController extends Controller
         $user->authorize_by = $request->authorized;
         $user->designation = "webcom_admin";
         $user->mobile = $request->mobile;
+        $user->user_avatar = "/upload/admin/temp/avatar/avatar-1577909_1280.jpg";
         $user->role_fk_id = $find_role->role_id;
 
         if ($request->ajax()) {

@@ -6,6 +6,7 @@ use App\Http\Requests\CompanyRequest;
 use App\Http\Requests\OTPRequest;
 use App\Http\Requests\SocialRequest;
 use App\Models\Approve;
+use App\Models\ApproveList;
 use App\Models\Company;
 use App\Models\Connection;
 use App\Models\ConnectionList;
@@ -21,6 +22,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -34,6 +36,14 @@ class CompanyController extends Controller
     public function index(Request $request)
     {
         if ($request->session()->has('company_user')) {
+            $total_post = Post::where('company_fk_id', $request->session()->get('company_user.company.company_id'))->count();
+            $conn_id = Connection::where('company_fk_id', $request->session()->get('company_user.company.company_id'))->first();
+            $total_connections = ConnectionList::where('connection_fk_id', $conn_id->connection_id)->count();
+            $approv_id = Approve::where('company_fk_id', $request->session()->get('company_user.company.company_id'))->first();
+            $total_approvel = ApproveList::where('approve_fk_id', $approv_id->approve_id)->count();
+            $total_pic = PersonInCharge::where('company_fk_id',  $request->session()->get('company_user.company.company_id'))
+                ->count();
+
             $id = Connection::where('company_fk_id', $request->session()->get('company_user.company.company_id'))->first();
             $list = ConnectionList::where('connection_fk_id', $id->connection_id)->select('connection_list.company_fk_id')->get();
             $data = array();
@@ -71,7 +81,15 @@ class CompanyController extends Controller
 
             $reaction = Reaction::all();
 
-            return view('app', compact('connections', 'news_que', 'reaction'));
+            return view('app', compact(
+                'connections',
+                'news_que',
+                'reaction',
+                'total_post',
+                'total_connections',
+                'total_approvel',
+                'total_pic'
+            ));
         } else {
             return redirect()->route('control_panel.login');
         }
@@ -228,8 +246,20 @@ class CompanyController extends Controller
 
             $image_path = "";
             if ($request->avatar != null) {
+
+                if (File::exists(public_path($request->path))) {
+                    if (!File::delete(public_path($request->path))) {
+                        if ($request->ajax()) {
+                            return response()->json(["status" => 500, "message" => "Avatar Delete Faild ..."]);
+                        } else {
+                            $request->session()->flash('error', 'Avatar Delete Faild ...');
+                            return redirect()->route('control_panel.profile.view');
+                        }
+                    }
+                }
+
                 $imageName = time() . '.' . $request->avatar->extension();
-                $request->avatar->move(public_path('upload/profile/'), $imageName);
+                $request->avatar->move(public_path('/upload/profile/'), $imageName);
                 $image_path = '/upload/profile/' . $imageName;
             } else {
                 $image_path = $request->path;

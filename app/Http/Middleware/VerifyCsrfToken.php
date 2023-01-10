@@ -13,6 +13,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         '/control/company/push/notify',
-        '/admin/register'
+        '/admin/register',
     ];
 }
