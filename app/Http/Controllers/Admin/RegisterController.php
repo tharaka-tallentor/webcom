@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\RegisterRequest;
 use App\Models\Admin\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -30,6 +31,7 @@ class RegisterController extends Controller
         $user->mobile = $request->mobile;
         $user->user_avatar = "/upload/admin/temp/avatar/avatar-1577909_1280.jpg";
         $user->role_fk_id = $find_role->role_id;
+        $user->registor_date = Carbon::now()->toDateString();
 
         if ($request->ajax()) {
             !$user->save() ? $res = ["status" => 500, "message" => "Registerd ..."] :

@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model
+class PostTags extends Model
 {
     use HasFactory;
-    protected $table = 'post';
-    protected $primaryKey = 'post_id';
+    protected $table = 'post_tags';
+    protected $primaryKey = 'post_tag_id';
     public $timestamps = true;
 }

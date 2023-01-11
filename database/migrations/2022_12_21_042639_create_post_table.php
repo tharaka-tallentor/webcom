@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('post', function (Blueprint $table) {
             $table->id('post_id');
+            $table->string('title');
             $table->longText('content');
             $table->unsignedBigInteger('pic_fk_id');
             $table->foreign('pic_fk_id')->references('pic_id')->on('person_in_charge')->onDelete('cascade');
